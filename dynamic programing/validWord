@@ -1,0 +1,96 @@
+
+import unittest
+
+def valid_word(k, array_words):
+    if k == '' : return True
+
+    for word in array_words:
+        is_starts = k.startswith(word)
+        is_ends = k.endswith(word)
+        if(is_starts):
+            return valid_word(k[len(word):], array_words)
+        if(is_ends):
+            return valid_word(k[:-len(word)], array_words)
+    
+    return False
+
+def valid_word_memo(k, array_words, memo):
+    key = k
+    if key in memo: return memo[key]
+    if k == '' : return True
+
+    for word in array_words:
+        is_starts = k.startswith(word)
+        is_ends = k.endswith(word)
+        if(is_starts):
+            result =  valid_word_memo(k[len(word):], array_words, memo)
+            memo[key] = result
+            return result
+        if(is_ends):
+            result = valid_word_memo(k[:-len(word)], array_words, memo)
+            memo[key] = result
+            return result
+    
+    return False
+        
+
+class Test(unittest.TestCase):
+    def test1 (self):
+        array = ['ab', 'xcd', 'cdf']
+        k = 'abcdf'
+        expected = True
+
+        response = valid_word(k, array)
+
+        self.assertEqual(response, expected)
+
+    def test2 (self):
+        array = ['xab', 'xcd', 'xcdf']
+        k = 'abcdf'
+        expected = False
+
+        response = valid_word(k, array)
+
+        self.assertEqual(response, expected)
+
+    def test_3 (self):
+        array = ['e', 'ee', 'eee', 'eeee', 'eeeee', 'eeeeee']
+        k = 'eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeef'
+        expected = False
+
+        response = valid_word(k, array)
+
+        self.assertEqual(response, expected)
+
+    def test_memo_1 (self):
+        array = ['ab', 'xcd', 'cdf']
+        k = 'abcdf'
+        expected = True
+
+        response = valid_word_memo(k, array, {})
+
+        self.assertEqual(response, expected)
+
+    def test_memo_2 (self):
+        array = ['xab', 'xcd', 'xcdf']
+        k = 'abcdf'
+        expected = False
+
+        response = valid_word_memo(k, array, {})
+
+        self.assertEqual(response, expected)
+
+    def test_memo_3 (self):
+        array = ['e', 'ee', 'eee', 'eeee', 'eeeee']
+        k = 'eeeeeeeeeeeeeeeeeeeeeeeeeeeeeef'
+        expected = False
+
+        response = valid_word_memo(k, array, {})
+
+        self.assertEqual(response, expected)
+
+
+
+
+if __name__ == '__main__':
+    unittest.main()
